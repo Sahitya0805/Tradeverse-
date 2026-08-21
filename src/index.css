@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-warm: #F6F4F0;
+    --card-warm: #FFFFFF;
+    --border-warm: #E6E2D8;
+    --text-primary: #1F1F1F;
+    --text-secondary: #706F6C;
+    --accent-gold-start: #D4A373;
+    --accent-gold-mid: #C59B27;
+    --accent-gold-end: #B8860B;
+  }
+
+  body {
+    background-color: #F6F4F0;
+    color: #1F1F1F;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+}
+
+/* WARM LUXURY CREAM CARDS */
+.warm-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E6E2D8;
+  border-radius: 1.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.warm-card-hover:hover {
+  border-color: #D4A373;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(212, 163, 115, 0.15);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #D4A373 0%, #C59B27 50%, #B8860B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark-luxury-card {
+  background: #141414;
+  border: 1px solid #262626;
+  border-radius: 1.5rem;
+}
+
+.font-serif-hero {
+  font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+.ai-orb-glow {
+  background: radial-gradient(circle at 30% 30%, #F5E6CA 0%, #D4A373 40%, #B8860B 85%);
+  box-shadow: 0 0 40px rgba(212, 163, 115, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes quietFade {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-quiet-fade {
+  animation: quietFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 20s linear infinite;
+}
