@@ -2,12 +2,22 @@ import React, { createContext, useContext, useState, useMemo } from 'react';
 import { Listing, FilterState, UserRole } from '../types';
 import { MOCK_LISTINGS } from '../data/mockListings';
 
+export interface UserAccount {
+  name: string;
+  email: string;
+  avatar: string;
+  proMember: boolean;
+}
+
 interface MarketplaceContextType {
   listings: Listing[];
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
   userRole: UserRole;
   setUserRole: (role: UserRole) => void;
+  currentUser: UserAccount;
+  loginUser: (name: string, email: string) => void;
+  logoutUser: () => void;
   wishlistIds: string[];
   toggleWishlist: (id: string) => void;
   compareIds: string[];
@@ -60,6 +70,33 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
   });
   
   const [userRole, setUserRole] = useState<UserRole>('buyer');
+
+  // Dynamic User Account state
+  const [currentUser, setCurrentUser] = useState<UserAccount>({
+    name: 'Sahitya',
+    email: 'sahitya@tradeverse.ai',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80',
+    proMember: true
+  });
+
+  const loginUser = (name: string, email: string) => {
+    const formattedName = name.trim() ? name.trim() : 'Sahitya';
+    setCurrentUser(prev => ({
+      ...prev,
+      name: formattedName,
+      email: email.trim() ? email.trim() : 'user@tradeverse.ai'
+    }));
+  };
+
+  const logoutUser = () => {
+    setCurrentUser({
+      name: 'Guest',
+      email: 'guest@tradeverse.ai',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80',
+      proMember: false
+    });
+  };
+
   const [wishlistIds, setWishlistIds] = useState<string[]>(['veh-1', 're-1']);
   const [compareIds, setCompareIds] = useState<string[]>(['veh-1', 'veh-2']);
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
@@ -165,6 +202,9 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setFilters,
       userRole,
       setUserRole,
+      currentUser,
+      loginUser,
+      logoutUser,
       wishlistIds,
       toggleWishlist,
       compareIds,

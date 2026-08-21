@@ -12,6 +12,7 @@ import {
 
 export const WarmHeroWorkspace: React.FC = () => {
   const { 
+    currentUser,
     setFilters, 
     setIsVoiceSearchOpen, 
     setIsImageSearchOpen
@@ -19,6 +20,9 @@ export const WarmHeroWorkspace: React.FC = () => {
 
   const { sendMessage } = useAI();
   const [queryInput, setQueryInput] = useState('');
+
+  // Extract first name for a friendly greeting
+  const firstName = currentUser.name.trim().split(' ')[0] || 'Sahitya';
 
   const PROMPT_CHIPS = [
     '🚗 Family SUV under $40k',
@@ -44,11 +48,11 @@ export const WarmHeroWorkspace: React.FC = () => {
   return (
     <div className="space-y-6 animate-quiet-fade pt-2">
       
-      {/* MINIMAL SLEEK HERO WORKSPACE */}
+      {/* MINIMAL SLEEK HERO WORKSPACE — FULLY RESPONSIVE */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* LEFT HERO TEXT & METRICS (7 COLUMNS) */}
-        <div className="lg:col-span-7 warm-card p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-white border-[#E6E2D8] shadow-sm">
+        <div className="lg:col-span-7 warm-card p-5 sm:p-8 flex flex-col justify-between space-y-6 bg-white border-[#E6E2D8] shadow-sm">
           
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF9EE] border border-[#F2E4C9] text-[#B8860B] text-xs font-bold">
@@ -56,8 +60,8 @@ export const WarmHeroWorkspace: React.FC = () => {
               <span>AI-Native Commerce Protocol</span>
             </div>
 
-            <h1 className="font-serif-hero text-3xl sm:text-4xl font-extrabold text-[#1F1F1F] tracking-tight leading-tight">
-              Good morning, <span className="gold-gradient-text">Sahitya 👋</span>
+            <h1 className="font-serif-hero text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#1F1F1F] tracking-tight leading-tight">
+              Good morning, <span className="gold-gradient-text">{firstName} 👋</span>
               <br />
               Commerce is now conversational.
             </h1>
@@ -67,8 +71,8 @@ export const WarmHeroWorkspace: React.FC = () => {
             </p>
           </div>
 
-          {/* 3 CLEAN METRIC BADGES */}
-          <div className="grid grid-cols-3 gap-3 pt-2">
+          {/* 3 CLEAN METRIC BADGES — RESPONSIVE GRID */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
             
             <div className="p-3 rounded-2xl bg-[#F6F4F0] border border-[#E6E2D8] space-y-1">
               <div className="text-[10px] text-[#706F6C] font-semibold">Active Buyers</div>
@@ -90,7 +94,7 @@ export const WarmHeroWorkspace: React.FC = () => {
         </div>
 
         {/* RIGHT AI COPILOT WORKSPACE (5 COLUMNS) */}
-        <div className="lg:col-span-5 warm-card p-6 flex flex-col justify-between space-y-5 bg-gradient-to-br from-white to-[#FFF9EE] border-[#F2E4C9] shadow-sm relative">
+        <div className="lg:col-span-5 warm-card p-5 sm:p-6 flex flex-col justify-between space-y-5 bg-gradient-to-br from-white to-[#FFF9EE] border-[#F2E4C9] shadow-sm relative">
           
           <div className="space-y-3">
             <div className="flex items-center justify-between">

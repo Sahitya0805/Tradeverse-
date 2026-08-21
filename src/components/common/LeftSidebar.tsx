@@ -18,6 +18,7 @@ interface LeftSidebarProps {
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({ onNavigateToAuth }) => {
   const { 
+    currentUser,
     setFilters, 
     setUserRole, 
     setIsWorkspaceOpen, 
@@ -118,7 +119,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ onNavigateToAuth }) =>
         })}
       </div>
 
-      {/* CLEAN PROFILE FOOTER */}
+      {/* DYNAMIC PROFILE FOOTER */}
       <div className="pt-4 border-t border-[#E8E4DC]">
         <div 
           onClick={() => {
@@ -129,12 +130,12 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ onNavigateToAuth }) =>
         >
           <div className="flex items-center gap-2.5">
             <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
-              alt="Sahitya"
+              src={currentUser.avatar}
+              alt={currentUser.name}
               className="w-8 h-8 rounded-full object-cover border border-[#D4A373]"
             />
             <div>
-              <div className="font-extrabold text-xs text-[#1F1F1F]">Sahitya</div>
+              <div className="font-extrabold text-xs text-[#1F1F1F] truncate max-w-[100px]">{currentUser.name}</div>
               <div className="text-[10px] text-[#706F6C]">View account</div>
             </div>
           </div>
@@ -154,6 +155,10 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ onNavigateToAuth }) =>
               <span>Account & AI Copilot Settings</span>
             </div>
             <div className="space-y-3 bg-white p-4 rounded-2xl border border-[#E6E2D8]">
+              <div className="flex justify-between items-center">
+                <span>Account Holder</span>
+                <span className="text-[#1F1F1F] font-bold">{currentUser.name}</span>
+              </div>
               <div className="flex justify-between items-center">
                 <span>Auto AI Price Alerts</span>
                 <span className="text-emerald-700 font-bold">Enabled</span>

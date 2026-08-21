@@ -12,8 +12,7 @@ import {
   Crown,
   ShoppingBag,
   UserCheck,
-  Building2,
-  CheckCircle2
+  Building2
 } from 'lucide-react';
 
 interface AuthPageViewProps {
@@ -21,19 +20,29 @@ interface AuthPageViewProps {
 }
 
 export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
-  const { userRole, setUserRole, notify } = useMarketplace();
+  const { userRole, setUserRole, currentUser, loginUser, notify } = useMarketplace();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const [email, setEmail] = useState('sahitya@tradeverse.ai');
+  const [fullName, setFullName] = useState(currentUser.name || 'Sahitya Singh');
+  const [email, setEmail] = useState(currentUser.email || 'sahitya@tradeverse.ai');
   const [password, setPassword] = useState('••••••••••••');
-  const [fullName, setFullName] = useState('Sahitya Singh');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const accountName = fullName.trim() ? fullName.trim() : 'Sahitya';
+    loginUser(accountName, email);
+
     if (mode === 'signin') {
-      notify(`Welcome back, ${fullName}! Signed in successfully.`, 'success');
+      notify(`Welcome back, ${accountName}! Signed in successfully.`, 'success');
     } else {
-      notify(`Account created for ${fullName}! Welcome to TradeVerse AI.`, 'success');
+      notify(`Account created for ${accountName}! Welcome to TradeVerse AI.`, 'success');
     }
+    onSuccess();
+  };
+
+  const handlePasskeyAuth = () => {
+    const accountName = fullName.trim() ? fullName.trim() : 'Sahitya';
+    loginUser(accountName, email);
+    notify(`🔑 Authenticated via Passkey / Touch ID for ${accountName}!`, 'success');
     onSuccess();
   };
 
@@ -57,7 +66,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
       </div>
 
       {/* SINGLE STANDALONE AUTH & PROFILE CARD */}
-      <div className="w-full max-w-xl bg-white border border-[#E6E2D8] rounded-3xl p-8 shadow-2xl space-y-6 text-[#1F1F1F]">
+      <div className="w-full max-w-xl bg-white border border-[#E6E2D8] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-[#1F1F1F]">
         
         {/* BRAND HEADER */}
         <div className="text-center space-y-2">
@@ -79,16 +88,16 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
         <div className="p-4 rounded-2xl bg-[#FFF9EE] border border-[#F2E4C9] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-              alt="Sahitya"
+              src={currentUser.avatar}
+              alt={currentUser.name}
               className="w-12 h-12 rounded-full object-cover border-2 border-[#B8860B]"
             />
             <div>
               <div className="font-extrabold text-sm text-[#1F1F1F] flex items-center gap-2">
-                <span>Sahitya Singh</span>
+                <span>{currentUser.name}</span>
                 <span className="px-2 py-0.5 rounded-full bg-[#B8860B] text-white text-[9px] font-bold">Pro</span>
               </div>
-              <div className="text-xs text-[#706F6C]">sahitya@tradeverse.ai</div>
+              <div className="text-xs text-[#706F6C]">{currentUser.email}</div>
             </div>
           </div>
 
@@ -167,22 +176,20 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
         {/* AUTH FORM */}
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           
-          {mode === 'signup' && (
-            <div className="space-y-1">
-              <label className="font-bold text-[#1F1F1F]">Full Name</label>
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-[#F6F4F0] border border-[#E6E2D8]">
-                <User className="w-4 h-4 text-[#B8860B]" />
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Sahitya Singh"
-                  className="w-full bg-transparent focus:outline-none text-[#1F1F1F]"
-                />
-              </div>
+          <div className="space-y-1">
+            <label className="font-bold text-[#1F1F1F]">Account Full Name</label>
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-[#F6F4F0] border border-[#E6E2D8]">
+              <User className="w-4 h-4 text-[#B8860B]" />
+              <input
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="e.g. Sahitya Singh"
+                className="w-full bg-transparent focus:outline-none text-[#1F1F1F] font-semibold"
+              />
             </div>
-          )}
+          </div>
 
           <div className="space-y-1">
             <label className="font-bold text-[#1F1F1F]">Email Address</label>
@@ -194,7 +201,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="sahitya@tradeverse.ai"
-                className="w-full bg-transparent focus:outline-none text-[#1F1F1F]"
+                className="w-full bg-transparent focus:outline-none text-[#1F1F1F] font-semibold"
               />
             </div>
           </div>
@@ -223,10 +230,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
           {/* PASSKEY BIOMETRIC AUTH BUTTON */}
           <button
             type="button"
-            onClick={() => {
-              notify('🔑 Authenticated via Passkey / Touch ID!', 'success');
-              onSuccess();
-            }}
+            onClick={handlePasskeyAuth}
             className="w-full py-3 rounded-2xl bg-[#FFF9EE] border border-[#F2E4C9] text-[#966F1E] font-bold text-xs flex items-center justify-center gap-2 cursor-pointer hover:bg-[#FFF2D7] transition-all"
           >
             <Fingerprint className="w-4 h-4 text-[#B8860B]" />
@@ -238,7 +242,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
             type="submit"
             className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#D4A373] to-[#B8860B] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] transition-transform cursor-pointer"
           >
-            <span>{mode === 'signin' ? 'Sign In to Account' : 'Create Account'}</span>
+            <span>{mode === 'signin' ? `Sign In as ${fullName.trim() || 'Sahitya'}` : `Create Account for ${fullName.trim() || 'Sahitya'}`}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>

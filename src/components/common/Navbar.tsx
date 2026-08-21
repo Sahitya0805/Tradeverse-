@@ -22,6 +22,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette, activePage, setActivePage }) => {
   const { 
+    currentUser,
     filters, 
     setFilters, 
     setIsCreateListingOpen, 
@@ -232,18 +233,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCommandPalette, activePage
             )}
           </div>
 
-          {/* USER PROFILE AVATAR — DIRECTLY NAVIGATES TO AUTH PAGE */}
+          {/* DYNAMIC USER PROFILE AVATAR — DIRECTLY NAVIGATES TO AUTH PAGE */}
           <div 
             onClick={() => {
               setActivePage('auth');
               setShowNotifications(false);
             }}
             className="flex items-center gap-2 cursor-pointer p-0.5 rounded-full border-2 border-[#D4A373] hover:scale-110 transition-transform shadow-sm"
-            title="Open Sign In & Account Center"
+            title={`Account Profile: ${currentUser.name}`}
           >
             <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
-              alt="Sahitya"
+              src={currentUser.avatar}
+              alt={currentUser.name}
               className="w-8 h-8 rounded-full object-cover"
             />
           </div>
