@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
-import { AIMessage } from '../types';
+import { AIMessage, Listing } from '../types';
 import { generateAIResponse } from '../data/mockAIResponses';
-import { useMarketplace } from './MarketplaceContext';
+import { API_BASE, useMarketplace } from './MarketplaceContext';
 
 interface AIContextType {
   messages: AIMessage[];
@@ -13,30 +13,35 @@ interface AIContextType {
 
 const AIContext = createContext<AIContextType | undefined>(undefined);
 
+const CLAUDE_AGENT = '✨ TradeVerse Copilot (Claude)';
+const OFFLINE_AGENT = 'Offline demo mode';
+
+const timestamp = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
 export const AIProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { listings, setIsWorkspaceOpen } = useMarketplace();
-  
+
   const [messages, setMessages] = useState<AIMessage[]>([
     {
       id: 'welcome-1',
       sender: 'ai',
-      text: `👋 **Good morning, Sahitya! I am your TradeVerse AI Copilot.**
+      text: `👋 **Hi! I am your TradeVerse AI Copilot.**
 
-I can search 100,000+ vector listings, evaluate KBB price comps, negotiate counter-offers, and generate binding smart escrow contracts.
+I can search the marketplace, compare listings and explain what you're looking at.
 
 Try asking:
-• *"Show me how TradeVerse AI works"*
-• *"Find family SUV under $40k"*
-• *"Compare laptops side-by-side"*`,
+• *"Find a family SUV under $40k"*
+• *"What laptops do you have?"*
+• *"Compare the cheapest two apartments"*`,
       timestamp: 'Just now',
-      agentName: '✨ Copilot Master Orchestrator'
+      agentName: CLAUDE_AGENT
     }
   ]);
 
   const [isThinking, setIsThinking] = useState(false);
-  const [activeAgent, setActiveAgent] = useState('Master Orchestrator Agent');
+  const [activeAgent, setActiveAgent] = useState(CLAUDE_AGENT);
 
-  const sendMessage = (userText: string) => {
+  const sendMessage = async (userText: string) => {
     if (!userText.trim()) return;
 
     // Automatically open AI workspace drawer when user sends a message
@@ -46,28 +51,56 @@ Try asking:
       id: `usr-${Date.now()}`,
       sender: 'user',
       text: userText,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: timestamp()
     };
+
+    const history = [...messages.filter(m => m.id !== 'welcome-1'), userMsg].map(m => ({
+      role: m.sender === 'user' ? 'user' : 'assistant',
+      content: m.text
+    }));
 
     setMessages(prev => [...prev, userMsg]);
     setIsThinking(true);
 
-    setTimeout(() => {
-      const response = generateAIResponse(userText, listings);
-      setActiveAgent(response.agentName || 'AI Copilot');
+    let aiMsg: AIMessage;
+    try {
+      const res = await fetch(`${API_BASE}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history })
+      });
+      const data = await res.json();
 
-      const aiMsg: AIMessage = {
+      if (res.status === 503) {
+        // No API key configured on the server: fall back to the scripted demo replies
+        throw new Error(data.error);
+      }
+
+      const shown: Listing[] = data.listings || [];
+      aiMsg = {
+        id: `ai-${Date.now()}`,
+        sender: 'ai',
+        text: res.ok ? data.text : `⚠️ ${data.error || 'Something went wrong.'}`,
+        agentName: CLAUDE_AGENT,
+        actionPayload: shown.length > 0 ? { type: 'listing_grid', data: shown } : undefined,
+        timestamp: timestamp()
+      };
+      setActiveAgent(CLAUDE_AGENT);
+    } catch (e) {
+      const response = generateAIResponse(userText, listings);
+      aiMsg = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
         text: response.text,
-        agentName: response.agentName,
+        agentName: `${response.agentName || 'AI Copilot'} · ${OFFLINE_AGENT}`,
         actionPayload: response.actionPayload,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        timestamp: timestamp()
       };
+      setActiveAgent(OFFLINE_AGENT);
+    }
 
-      setMessages(prev => [...prev, aiMsg]);
-      setIsThinking(false);
-    }, 600);
+    setMessages(prev => [...prev, aiMsg]);
+    setIsThinking(false);
   };
 
   const clearHistory = () => {

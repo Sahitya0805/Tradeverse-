@@ -5,7 +5,7 @@ import { MainCategory } from '../../types';
 import { ArrowRight, RefreshCw, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export const ExploreCategoriesSection: React.FC = () => {
-  const { setFilters, syncEcayData, isSyncingEcay, listings } = useMarketplace();
+  const { setFilters, refreshListings, isRefreshingListings, listings } = useMarketplace();
 
   const handleCategoryClick = (catId: MainCategory) => {
     setFilters(prev => ({
@@ -29,21 +29,21 @@ export const ExploreCategoriesSection: React.FC = () => {
             </h2>
             <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 text-[10px] font-bold border border-emerald-500/20 flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" />
-              <span>{listings.length} Live Items</span>
+              <span>{listings.length} Listings{listings.some(l => l.source === 'demo') ? ' · Demo data' : ''}</span>
             </span>
           </div>
           <p className="text-xs text-[#706F6C]">Discover verified vehicles, real estate, jobs, and tech electronics.</p>
         </div>
 
-        {/* 1-CLICK ECAYTRADE DATA SYNC TRIGGER */}
+        {/* RELOAD LISTINGS FROM THE BACKEND */}
         <button
-          onClick={syncEcayData}
-          disabled={isSyncingEcay}
+          onClick={refreshListings}
+          disabled={isRefreshingListings}
           className="px-3.5 py-2 rounded-2xl bg-[#FFF9EE] border border-[#F2E4C9] text-[#966F1E] hover:bg-[#FFF2D7] text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer shrink-0"
-          title="Ingest live real-time listings from EcayTrade"
+          title="Reload listings from the TradeVerse database"
         >
-          <RefreshCw className={`w-3.5 h-3.5 text-[#B8860B] ${isSyncingEcay ? 'animate-spin' : ''}`} />
-          <span>{isSyncingEcay ? 'Syncing EcayTrade Data...' : '⚡ Sync Live EcayTrade Data'}</span>
+          <RefreshCw className={`w-3.5 h-3.5 text-[#B8860B] ${isRefreshingListings ? 'animate-spin' : ''}`} />
+          <span>{isRefreshingListings ? 'Refreshing...' : 'Refresh Listings'}</span>
         </button>
       </div>
 

@@ -67,6 +67,8 @@ export interface Listing {
   vehicleDetails?: any;
   jobDetails?: any;
   propertyDetails?: any;
+  source?: 'demo' | 'user' | string;
+  sourceUrl?: string | null;
 }
 
 export type ListingItem = Listing;

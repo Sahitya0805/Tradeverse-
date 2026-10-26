@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useMemo, useEffect } from '
 import { Listing, FilterState, UserRole } from '../types';
 import { MOCK_LISTINGS } from '../data/mockListings';
 
-const API_BASE = 'http://127.0.0.1:5001/api';
+export const API_BASE = 'http://127.0.0.1:5001/api';
 
 export interface UserAccount {
   id?: string;
@@ -22,8 +22,8 @@ interface MarketplaceContextType {
   loginUser: (name: string, email: string, password?: string) => Promise<boolean>;
   signupUser: (name: string, email: string, password?: string) => Promise<boolean>;
   logoutUser: () => void;
-  syncEcayData: () => Promise<void>;
-  isSyncingEcay: boolean;
+  refreshListings: () => Promise<void>;
+  isRefreshingListings: boolean;
   wishlistIds: string[];
   toggleWishlist: (id: string) => void;
   compareIds: string[];
@@ -64,7 +64,7 @@ const MarketplaceContext = createContext<MarketplaceContextType | undefined>(und
 
 export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [listings, setListings] = useState<Listing[]>(MOCK_LISTINGS);
-  const [isSyncingEcay, setIsSyncingEcay] = useState(false);
+  const [isRefreshingListings, setIsRefreshingListings] = useState(false);
 
   const [filters, setFilters] = useState<FilterState>({
     category: 'all',
@@ -188,21 +188,14 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
     notify('Logged out of session', 'info');
   };
 
-  // 1-Click EcayTrade Real-time Data Ingestion Sync
-  const syncEcayData = async () => {
-    setIsSyncingEcay(true);
-    notify('⚡ Ingesting live real-time EcayTrade market listings...', 'info');
+  // Reload listings from the backend database
+  const refreshListings = async () => {
+    setIsRefreshingListings(true);
     try {
-      const res = await fetch(`${API_BASE}/listings/sync-ecay`, { method: 'POST' });
-      const data = await res.json();
-      if (res.ok) {
-        await fetchRealListings();
-        notify(`🎉 Ingested ${data.count || 4} real EcayTrade market listings into SQLite database!`, 'success');
-      }
-    } catch (e) {
-      notify('EcayTrade data sync complete!', 'success');
+      await fetchRealListings();
+      notify('Listings refreshed', 'success');
     } finally {
-      setIsSyncingEcay(false);
+      setIsRefreshingListings(false);
     }
   };
 
@@ -322,8 +315,8 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       loginUser,
       signupUser,
       logoutUser,
-      syncEcayData,
-      isSyncingEcay,
+      refreshListings,
+      isRefreshingListings,
       wishlistIds,
       toggleWishlist,
       compareIds,

@@ -41,6 +41,8 @@ export function initDb() {
       views INTEGER DEFAULT 0,
       likes INTEGER DEFAULT 0,
       featured INTEGER DEFAULT 0,
+      source TEXT DEFAULT 'demo', -- where the listing came from, e.g. 'demo', 'user', or an import name
+      source_url TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -55,6 +57,14 @@ export function initDb() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
+
+  // Migrate databases created before listings tracked their source
+  const listingColumns = db.prepare('PRAGMA table_info(listings)').all().map(c => c.name);
+  if (!listingColumns.includes('source')) db.exec("ALTER TABLE listings ADD COLUMN source TEXT DEFAULT 'demo'");
+  if (!listingColumns.includes('source_url')) db.exec('ALTER TABLE listings ADD COLUMN source_url TEXT');
+
+  // Remove the invented listings the old EcayTrade seeder presented as real
+  db.prepare("DELETE FROM listings WHERE id LIKE 'ecay-%'").run();
 
   // Seed default demo user if not exists
   const existingUser = db.prepare('SELECT * FROM users WHERE email = ?').get('sahitya@tradeverse.ai');
