@@ -54,7 +54,7 @@ export const HowItWorksPageView: React.FC = () => {
           </div>
           <h3 className="font-bold text-base text-[#1F1F1F]">2. Agent Analysis</h3>
           <p className="text-xs text-[#706F6C] leading-relaxed">
-            Vector search engine queries 100,000+ listings while Valuation & Fraud Agents verify price comps and seller identity.
+            The AI assistant searches the marketplace database, pulls up full listing details, and compares prices across similar items.
           </p>
         </div>
 

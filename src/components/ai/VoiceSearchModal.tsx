@@ -7,13 +7,13 @@ export const VoiceSearchModal: React.FC = () => {
   const { isVoiceSearchOpen, setIsVoiceSearchOpen } = useMarketplace();
   const { sendMessage } = useAI();
   const [isListening, setIsListening] = useState(true);
-  const [transcript, setTranscript] = useState('Listening... Speak naturally (e.g. "Find me a family SUV under $40,000 in Austin")');
+  const [transcript, setTranscript] = useState('Listening... Speak naturally (e.g. "Find me a family SUV under $40,000")');
 
   useEffect(() => {
     if (isVoiceSearchOpen) {
       setIsListening(true);
       const timer = setTimeout(() => {
-        setTranscript('Find apartments under $2800 near tech corridor in Seattle with pet friendly policy');
+        setTranscript('Find apartments under $2800 near Camana Bay with pet friendly policy');
         setIsListening(false);
       }, 3500);
       return () => clearTimeout(timer);

@@ -113,12 +113,13 @@ export function getAllListings() {
   return db.prepare('SELECT * FROM listings ORDER BY created_at DESC').all().map(rowToListing);
 }
 
-// Seeds the clearly labeled demo dataset when the database has no listings
-export function seedDemoListingsIfEmpty() {
-  const { count } = db.prepare('SELECT COUNT(*) AS count FROM listings').get();
-  if (count > 0) return 0;
-  const demo = JSON.parse(fs.readFileSync(DEMO_LISTINGS_PATH, 'utf8'));
-  return upsertListings(demo.map(item => normalizeListing(item, 'demo')));
+// Seeds the clearly labeled demo dataset when the database has no listings, and keeps
+// already-seeded demo listings in sync with demoListings.json
+export function seedDemoListings() {
+  const { total, demo } = db.prepare("SELECT COUNT(*) AS total, SUM(source = 'demo') AS demo FROM listings").get();
+  if (total > 0 && !demo) return 0;
+  const items = JSON.parse(fs.readFileSync(DEMO_LISTINGS_PATH, 'utf8'));
+  return upsertListings(items.map(item => normalizeListing(item, 'demo')));
 }
 
 // Minimal RFC 4180 CSV parser: quoted fields, escaped quotes, embedded newlines

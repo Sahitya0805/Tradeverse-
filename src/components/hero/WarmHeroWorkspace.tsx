@@ -13,6 +13,7 @@ import {
 export const WarmHeroWorkspace: React.FC = () => {
   const { 
     currentUser,
+    listings,
     setFilters, 
     setIsVoiceSearchOpen, 
     setIsImageSearchOpen
@@ -26,7 +27,7 @@ export const WarmHeroWorkspace: React.FC = () => {
 
   const PROMPT_CHIPS = [
     '🚗 Family SUV under $40k',
-    '🏠 2BHK San Diego apartment',
+    '🏠 2-bed condo in West Bay',
     '💼 Staff AI Engineer remote',
     '📱 MacBook Air M3 deal'
   ];
@@ -67,7 +68,7 @@ export const WarmHeroWorkspace: React.FC = () => {
             </h1>
 
             <p className="text-xs sm:text-sm text-[#706F6C] leading-relaxed max-w-xl">
-              Ask TradeVerse AI to search 100,000+ vector listings, compute KBB price comps, negotiate counter-offers, and draft binding smart contracts.
+              Ask TradeVerse AI to search listings in plain English, compare options side by side, and explain what you are looking at.
             </p>
           </div>
 
@@ -75,18 +76,18 @@ export const WarmHeroWorkspace: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
             
             <div className="p-3 rounded-2xl bg-[#F6F4F0] border border-[#E6E2D8] space-y-1">
-              <div className="text-[10px] text-[#706F6C] font-semibold">Active Buyers</div>
-              <div className="font-display font-extrabold text-base text-[#1F1F1F]">10K+ Users</div>
+              <div className="text-[10px] text-[#706F6C] font-semibold">Listings</div>
+              <div className="font-display font-extrabold text-base text-[#1F1F1F]">{listings.length}</div>
             </div>
 
             <div className="p-3 rounded-2xl bg-[#F6F4F0] border border-[#E6E2D8] space-y-1">
-              <div className="text-[10px] text-[#706F6C] font-semibold">AI Fit Accuracy</div>
-              <div className="font-display font-extrabold text-base text-emerald-700">98% Fit</div>
+              <div className="text-[10px] text-[#706F6C] font-semibold">AI Assistant</div>
+              <div className="font-display font-extrabold text-base text-emerald-700">Claude</div>
             </div>
 
             <div className="p-3 rounded-2xl bg-[#F6F4F0] border border-[#E6E2D8] space-y-1">
-              <div className="text-[10px] text-[#706F6C] font-semibold">Smart Escrow</div>
-              <div className="font-display font-extrabold text-base text-[#B8860B]">24/7 Verified</div>
+              <div className="text-[10px] text-[#706F6C] font-semibold">Search</div>
+              <div className="font-display font-extrabold text-base text-[#B8860B]">Plain English</div>
             </div>
 
           </div>
@@ -116,7 +117,7 @@ export const WarmHeroWorkspace: React.FC = () => {
                   rows={3}
                   value={queryInput}
                   onChange={(e) => setQueryInput(e.target.value)}
-                  placeholder="Ask anything... e.g. 'Find a 2024 SUV under $40k with low mileage in Austin'"
+                  placeholder="Ask anything... e.g. 'Find a 2024 SUV under $40k with low mileage'"
                   className="w-full p-3.5 rounded-2xl bg-[#F6F4F0] border border-[#E6E2D8] text-xs text-[#1F1F1F] placeholder-[#A09E97] focus:outline-none focus:border-[#D4A373] resize-none font-medium"
                 />
 

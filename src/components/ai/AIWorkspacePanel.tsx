@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useMarketplace } from '../../context/MarketplaceContext';
 import { useAI } from '../../context/AIContext';
+import { ChatMarkdown } from './ChatMarkdown';
 import { 
   Bot, 
   X, 
@@ -136,7 +137,7 @@ export const AIWorkspacePanel: React.FC<{ isOpen: boolean; onClose: () => void }
                   <span>{msg.timestamp}</span>
                 </div>
 
-                <div className="whitespace-pre-wrap">{msg.text}</div>
+                {msg.sender === 'user' ? <div className="whitespace-pre-wrap">{msg.text}</div> : <ChatMarkdown text={msg.text} />}
 
                 {/* ARCHITECTURE DEMO ACTION PAYLOAD */}
                 {msg.actionPayload?.type === 'architecture_demo' && (

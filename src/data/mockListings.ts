@@ -10,7 +10,7 @@ export const MOCK_LISTINGS: Listing[] = [
     price: 39500,
     originalPrice: 44000,
     priceType: 'negotiable',
-    location: 'Austin, TX (Local & Shipping)',
+    location: 'George Town, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80'
@@ -58,7 +58,7 @@ export const MOCK_LISTINGS: Listing[] = [
     price: 34800,
     originalPrice: 38500,
     priceType: 'negotiable',
-    location: 'Denver, CO',
+    location: 'Bodden Town, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80'
     ],
@@ -105,7 +105,7 @@ export const MOCK_LISTINGS: Listing[] = [
     price: 37200,
     originalPrice: 42000,
     priceType: 'negotiable',
-    location: 'San Jose, CA',
+    location: 'West Bay, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80'
     ],
@@ -151,7 +151,7 @@ export const MOCK_LISTINGS: Listing[] = [
     price: 35900,
     originalPrice: 41000,
     priceType: 'fixed',
-    location: 'Chicago, IL',
+    location: 'George Town, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80'
     ],
@@ -196,7 +196,7 @@ export const MOCK_LISTINGS: Listing[] = [
     subcategory: 'Luxury Cars',
     price: 118000,
     priceType: 'fixed',
-    location: 'Miami, FL',
+    location: 'Seven Mile Beach, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=800&q=80'
     ],
@@ -242,7 +242,7 @@ export const MOCK_LISTINGS: Listing[] = [
     subcategory: 'Homes',
     price: 1250000,
     priceType: 'fixed',
-    location: 'San Diego, CA (Pacific Beach)',
+    location: 'Rum Point, North Side, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80'
@@ -290,7 +290,7 @@ export const MOCK_LISTINGS: Listing[] = [
     subcategory: 'Apartments',
     price: 2800,
     priceType: 'monthly',
-    location: 'Seattle, WA (South Lake Union)',
+    location: 'Camana Bay, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80'
     ],
@@ -335,7 +335,7 @@ export const MOCK_LISTINGS: Listing[] = [
     subcategory: 'Condos',
     price: 3200,
     priceType: 'monthly',
-    location: 'San Francisco, CA (SOMA)',
+    location: 'Seven Mile Beach, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'
     ],
@@ -355,7 +355,7 @@ export const MOCK_LISTINGS: Listing[] = [
       priceHistoryTrend: 'stable',
       pros: ['24/7 Concierge & Security', 'Includes designated EV charging bay', 'Corner unit with dual bay views'],
       cons: ['Parking fee $200/mo'],
-      aiSummary: 'Premier urban high-rise living in San Francisco tech hub.'
+      aiSummary: 'Premier beachfront high-rise living on Seven Mile Beach.'
     },
     specs: [
       { label: 'Bed / Bath', value: '2 Bed / 2 Bath' },
@@ -382,7 +382,7 @@ export const MOCK_LISTINGS: Listing[] = [
     subcategory: 'Remote Jobs',
     price: 220000,
     priceType: 'contact',
-    location: 'Remote (US/Canada)',
+    location: 'Remote (Cayman-based)',
     images: [
       'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80'
     ],
@@ -474,7 +474,7 @@ export const MOCK_LISTINGS: Listing[] = [
     price: 2950,
     originalPrice: 3800,
     priceType: 'negotiable',
-    location: 'San Francisco, CA',
+    location: 'Camana Bay, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80'
     ],
@@ -514,7 +514,7 @@ export const MOCK_LISTINGS: Listing[] = [
     price: 1240,
     originalPrice: 1399,
     priceType: 'fixed',
-    location: 'New York, NY',
+    location: 'George Town, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=80'
     ],
@@ -553,7 +553,7 @@ export const MOCK_LISTINGS: Listing[] = [
     price: 1590,
     originalPrice: 1799,
     priceType: 'negotiable',
-    location: 'Austin, TX',
+    location: 'Savannah, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80'
     ],
@@ -593,7 +593,7 @@ export const MOCK_LISTINGS: Listing[] = [
     subcategory: 'Development',
     price: 85,
     priceType: 'hourly',
-    location: 'Global / Remote Service',
+    location: 'Island-wide / Remote',
     images: [
       'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80'
     ],
@@ -633,7 +633,7 @@ export const MOCK_LISTINGS: Listing[] = [
     subcategory: 'Dogs',
     price: 1400,
     priceType: 'negotiable',
-    location: 'Denver, CO',
+    location: 'Bodden Town, Grand Cayman',
     images: [
       'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=800&q=80'
     ],
@@ -673,7 +673,7 @@ export const MOCK_LISTINGS: Listing[] = [
     subcategory: 'Events',
     price: 49,
     priceType: 'fixed',
-    location: 'San Jose Convention Center & Online',
+    location: 'Camana Bay & Online',
     images: [
       'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80'
     ],
@@ -712,7 +712,7 @@ export const MOCK_LISTINGS: Listing[] = [
     subcategory: 'Startups',
     price: 145000,
     priceType: 'negotiable',
-    location: 'Chicago, IL (Global Ship)',
+    location: 'East End, Grand Cayman (ships island-wide)',
     images: [
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
     ],

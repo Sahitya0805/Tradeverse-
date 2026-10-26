@@ -60,7 +60,7 @@ export const RightAISidebar: React.FC = () => {
 
         <div className="space-y-1.5 text-xs font-semibold">
           <button
-            onClick={() => handlePromptClick('Find best below-market deals in Austin')}
+            onClick={() => handlePromptClick('Find the best below-market deals')}
             className="w-full p-3 rounded-2xl bg-white border border-[#E6E2D8] hover:border-[#D4A373] text-[#1F1F1F] flex items-center justify-between cursor-pointer transition-all hover:bg-[#FFF9EE]"
           >
             <div className="flex items-center gap-2.5">

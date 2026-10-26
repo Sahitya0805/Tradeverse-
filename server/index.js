@@ -4,7 +4,7 @@ import { initDb } from './db.js';
 import authRoutes from './routes/auth.js';
 import listingRoutes from './routes/listings.js';
 import chatRoutes from './routes/chat.js';
-import { seedDemoListingsIfEmpty } from './services/listingImport.js';
+import { seedDemoListings } from './services/listingImport.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -16,9 +16,9 @@ app.use(express.json({ limit: '10mb' }));
 // Initialize SQLite Database schema & seed base user
 initDb();
 
-// Seed the labeled demo listings if the database has none
-const seeded = seedDemoListingsIfEmpty();
-if (seeded > 0) console.log(`Seeded ${seeded} demo listings`);
+// Seed or refresh the labeled demo listings
+const seeded = seedDemoListings();
+if (seeded > 0) console.log(`Loaded ${seeded} demo listings`);
 
 // API Routes
 app.use('/api/auth', authRoutes);

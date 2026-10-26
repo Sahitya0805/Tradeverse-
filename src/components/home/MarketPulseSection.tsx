@@ -210,7 +210,7 @@ export const MarketPulseSection: React.FC = () => {
 
           <div 
             onClick={() => {
-              sendMessage('2BHK apartment near Whitefield');
+              sendMessage('2-bed condo in West Bay');
               setIsWorkspaceOpen(true);
             }}
             className="p-2.5 rounded-xl bg-[#F6F4F0] border border-[#E6E2D8] hover:border-[#D4A373] flex items-center justify-between cursor-pointer transition-colors"
@@ -218,7 +218,7 @@ export const MarketPulseSection: React.FC = () => {
             <div className="flex items-center gap-2.5">
               <MessageSquareText className="w-4 h-4 text-[#B8860B]" />
               <div>
-                <div className="font-bold text-[#1F1F1F]">2BHK apartment near Whitefield</div>
+                <div className="font-bold text-[#1F1F1F]">2-bed condo in West Bay</div>
                 <div className="text-[10px] text-[#706F6C]">Yesterday</div>
               </div>
             </div>
