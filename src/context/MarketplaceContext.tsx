@@ -12,6 +12,13 @@ export interface UserAccount {
   proMember: boolean;
 }
 
+const GUEST_USER: UserAccount = {
+  name: 'Guest',
+  email: '',
+  avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80',
+  proMember: false
+};
+
 interface MarketplaceContextType {
   listings: Listing[];
   filters: FilterState;
@@ -79,13 +86,8 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
   
   const [userRole, setUserRole] = useState<UserRole>('buyer');
 
-  // Dynamic User Account state
-  const [currentUser, setCurrentUser] = useState<UserAccount>({
-    name: 'Sahitya',
-    email: 'sahitya@tradeverse.ai',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80',
-    proMember: true
-  });
+  // Signed-out visitors are guests until the backend confirms a session
+  const [currentUser, setCurrentUser] = useState<UserAccount>(GUEST_USER);
 
   // Fetch real listings from backend database
   const fetchRealListings = async () => {
@@ -110,7 +112,11 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       fetch(`${API_BASE}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
-        .then(res => res.json())
+        .then(res => {
+          // Drop tokens the server no longer accepts (expired, or signed with an old secret)
+          if (res.status === 401 || res.status === 404) localStorage.removeItem('tradeverse_token');
+          return res.json();
+        })
         .then(data => {
           if (data.user) {
             setCurrentUser(data.user);
@@ -120,71 +126,38 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   }, []);
 
-  // Real API Login
-  const loginUser = async (name: string, email: string, password?: string): Promise<boolean> => {
+  // Sends credentials to the backend; only a token from the server signs the user in
+  const authenticate = async (path: 'login' | 'signup', body: object, successText: (name: string) => string): Promise<boolean> => {
     try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
+      const res = await fetch(`${API_BASE}/auth/${path}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: password || 'password123', name })
+        body: JSON.stringify(body)
       });
       const data = await res.json();
       if (res.ok && data.token) {
         localStorage.setItem('tradeverse_token', data.token);
         setCurrentUser(data.user);
-        notify(`Welcome back, ${data.user.name}! Signed in to backend session.`, 'success');
-        return true;
-      } else {
-        // Fallback local update if offline
-        const cleanName = name.trim() ? name.trim() : 'Sahitya';
-        setCurrentUser(prev => ({ ...prev, name: cleanName, email }));
-        notify(`Welcome back, ${cleanName}!`, 'success');
+        notify(successText(data.user.name), 'success');
         return true;
       }
+      notify(data.error || 'Authentication failed', 'error');
+      return false;
     } catch (e) {
-      const cleanName = name.trim() ? name.trim() : 'Sahitya';
-      setCurrentUser(prev => ({ ...prev, name: cleanName, email }));
-      notify(`Signed in as ${cleanName}`, 'success');
-      return true;
+      notify('Could not reach the TradeVerse server. Please try again.', 'error');
+      return false;
     }
   };
 
-  // Real API Signup
-  const signupUser = async (name: string, email: string, password?: string): Promise<boolean> => {
-    try {
-      const res = await fetch(`${API_BASE}/auth/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password: password || 'password123' })
-      });
-      const data = await res.json();
-      if (res.ok && data.token) {
-        localStorage.setItem('tradeverse_token', data.token);
-        setCurrentUser(data.user);
-        notify(`Account created for ${data.user.name}! Saved to database.`, 'success');
-        return true;
-      } else {
-        const cleanName = name.trim() ? name.trim() : 'Sahitya';
-        setCurrentUser(prev => ({ ...prev, name: cleanName, email }));
-        notify(`Account created for ${cleanName}!`, 'success');
-        return true;
-      }
-    } catch (e) {
-      const cleanName = name.trim() ? name.trim() : 'Sahitya';
-      setCurrentUser(prev => ({ ...prev, name: cleanName, email }));
-      notify(`Account created for ${cleanName}!`, 'success');
-      return true;
-    }
-  };
+  const loginUser = (name: string, email: string, password?: string): Promise<boolean> =>
+    authenticate('login', { email, password }, userName => `Welcome back, ${userName}!`);
+
+  const signupUser = (name: string, email: string, password?: string): Promise<boolean> =>
+    authenticate('signup', { name, email, password }, userName => `Account created for ${userName}!`);
 
   const logoutUser = () => {
     localStorage.removeItem('tradeverse_token');
-    setCurrentUser({
-      name: 'Guest',
-      email: 'guest@tradeverse.ai',
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80',
-      proMember: false
-    });
+    setCurrentUser(GUEST_USER);
     notify('Logged out of session', 'info');
   };
 

@@ -7,7 +7,6 @@ import {
   User, 
   ArrowRight, 
   ShieldCheck, 
-  Fingerprint, 
   ArrowLeft,
   Crown,
   ShoppingBag,
@@ -23,37 +22,26 @@ interface AuthPageViewProps {
 export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
   const { userRole, setUserRole, currentUser, loginUser, signupUser, notify } = useMarketplace();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const [fullName, setFullName] = useState(currentUser.name || 'Sahitya Singh');
-  const [email, setEmail] = useState(currentUser.email || 'sahitya@tradeverse.ai');
-  const [password, setPassword] = useState('password123');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState(currentUser.email || '');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    const accountName = fullName.trim() ? fullName.trim() : 'Sahitya';
+    const accountName = fullName.trim();
 
     try {
-      if (mode === 'signin') {
-        await loginUser(accountName, email, password);
-      } else {
-        await signupUser(accountName, email, password);
-      }
-      onSuccess();
+      const ok = mode === 'signin'
+        ? await loginUser(accountName, email, password)
+        : await signupUser(accountName, email, password);
+      if (ok) onSuccess();
     } catch (err) {
       notify('Authentication failed', 'error');
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handlePasskeyAuth = async () => {
-    setIsLoading(true);
-    const accountName = fullName.trim() ? fullName.trim() : 'Sahitya';
-    await loginUser(accountName, email, 'password123');
-    notify(`🔑 Authenticated via Passkey / Touch ID for ${accountName}!`, 'success');
-    setIsLoading(false);
-    onSuccess();
   };
 
   return (
@@ -186,6 +174,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
         {/* AUTH FORM */}
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           
+          {mode === 'signup' && (
           <div className="space-y-1">
             <label className="font-bold text-[#1F1F1F]">Account Full Name</label>
             <div className="flex items-center gap-2 p-3 rounded-xl bg-[#F6F4F0] border border-[#E6E2D8]">
@@ -200,6 +189,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
               />
             </div>
           </div>
+          )}
 
           <div className="space-y-1">
             <label className="font-bold text-[#1F1F1F]">Email Address</label>
@@ -210,7 +200,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="sahitya@tradeverse.ai"
+                placeholder="you@example.com"
                 className="w-full bg-transparent focus:outline-none text-[#1F1F1F] font-semibold"
               />
             </div>
@@ -220,7 +210,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
             <div className="flex justify-between font-bold text-[#1F1F1F]">
               <label>Password</label>
               {mode === 'signin' && (
-                <button type="button" onClick={() => notify('Password reset link sent to email', 'info')} className="text-[10px] text-[#B8860B] hover:underline">
+                <button type="button" onClick={() => notify('Password reset is not available yet', 'info')} className="text-[10px] text-[#B8860B] hover:underline">
                   Forgot Password?
                 </button>
               )}
@@ -230,6 +220,9 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
               <input
                 type="password"
                 required
+                minLength={mode === 'signup' ? 8 : undefined}
+                autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
+                placeholder={mode === 'signup' ? 'At least 8 characters' : ''}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-transparent focus:outline-none text-[#1F1F1F]"
@@ -237,16 +230,6 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
             </div>
           </div>
 
-          {/* PASSKEY BIOMETRIC AUTH BUTTON */}
-          <button
-            type="button"
-            onClick={handlePasskeyAuth}
-            disabled={isLoading}
-            className="w-full py-3 rounded-2xl bg-[#FFF9EE] border border-[#F2E4C9] text-[#966F1E] font-bold text-xs flex items-center justify-center gap-2 cursor-pointer hover:bg-[#FFF2D7] transition-all"
-          >
-            <Fingerprint className="w-4 h-4 text-[#B8860B]" />
-            <span>Sign In with Passkey / Face ID</span>
-          </button>
 
           {/* SUBMIT BUTTON */}
           <button
@@ -258,7 +241,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
               <RefreshCw className="w-4 h-4 animate-spin text-white" />
             ) : (
               <>
-                <span>{mode === 'signin' ? `Sign In as ${fullName.trim() || 'Sahitya'}` : `Create Account for ${fullName.trim() || 'Sahitya'}`}</span>
+                <span>{mode === 'signin' ? 'Sign In' : 'Create Account'}</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -268,7 +251,7 @@ export const AuthPageView: React.FC<AuthPageViewProps> = ({ onSuccess }) => {
         {/* FOOTER BADGE */}
         <div className="pt-2 border-t border-[#E6E2D8] flex items-center justify-center gap-2 text-[11px] text-[#706F6C]">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>256-Bit Encrypted SOC2 Auth & SQLite Database</span>
+          <span>Passwords are stored as bcrypt hashes</span>
         </div>
 
       </div>

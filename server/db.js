@@ -66,11 +66,21 @@ export function initDb() {
   // Remove the invented listings the old EcayTrade seeder presented as real
   db.prepare("DELETE FROM listings WHERE id LIKE 'ecay-%'").run();
 
-  // Seed default demo user if not exists
+  // The demo account exists only when DEMO_USER_PASSWORD is set, and always uses that password
+  const demoPassword = process.env.DEMO_USER_PASSWORD;
   const existingUser = db.prepare('SELECT * FROM users WHERE email = ?').get('sahitya@tradeverse.ai');
-  if (!existingUser) {
+  if (existingUser) {
+    if (demoPassword) {
+      if (!bcrypt.compareSync(demoPassword, existingUser.password_hash)) {
+        db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(bcrypt.hashSync(demoPassword, 10), existingUser.id);
+      }
+    } else if (bcrypt.compareSync('password123', existingUser.password_hash)) {
+      // Older versions seeded this account with a publicly known password
+      db.prepare('DELETE FROM users WHERE id = ?').run(existingUser.id);
+    }
+  } else if (demoPassword) {
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync('password123', salt);
+    const hash = bcrypt.hashSync(demoPassword, salt);
     db.prepare(`
       INSERT INTO users (id, name, email, password_hash, avatar, pro_member)
       VALUES (?, ?, ?, ?, ?, ?)

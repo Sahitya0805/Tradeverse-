@@ -1,18 +1,37 @@
+import crypto from 'crypto';
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import db from '../db.js';
 
 const router = express.Router();
-const JWT_SECRET = 'tradeverse-ai-super-secret-key-2026';
+
+// Tokens are signed with JWT_SECRET. Production must set it; in development a random
+// per-process secret is used, so sessions end when the server restarts.
+if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('JWT_SECRET must be set in production');
+}
+if (!process.env.JWT_SECRET) {
+  console.warn('JWT_SECRET is not set; using a random secret (sessions reset on restart)');
+}
+const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
+
+const MIN_PASSWORD_LENGTH = 8;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // POST /api/auth/signup — Real User Registration
 router.post('/signup', (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!email || !password) {
+    if (typeof email !== 'string' || typeof password !== 'string' || !email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
+    }
+    if (!EMAIL_PATTERN.test(email.trim())) {
+      return res.status(400).json({ error: 'Enter a valid email address' });
+    }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({ error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters` });
     }
 
     const cleanEmail = email.trim().toLowerCase();
@@ -61,31 +80,15 @@ router.post('/login', (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    if (typeof email !== 'string' || typeof password !== 'string' || !email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
     const cleanEmail = email.trim().toLowerCase();
     const user = db.prepare('SELECT * FROM users WHERE email = ?').get(cleanEmail);
 
-    if (!user) {
-      // If demo login for sahitya@tradeverse.ai or quick test, auto-create
-      if (cleanEmail === 'sahitya@tradeverse.ai') {
-        const userId = 'usr-sahitya-1';
-        const avatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80';
-        const token = jwt.sign({ userId, email: cleanEmail, name: 'Sahitya' }, JWT_SECRET, { expiresIn: '7d' });
-        return res.json({
-          message: 'Signed in successfully',
-          token,
-          user: { id: userId, name: 'Sahitya', email: cleanEmail, avatar: avatarUrl, proMember: true }
-        });
-      }
-      return res.status(401).json({ error: 'Invalid email or password' });
-    }
-
-    // Verify password hash
-    const isValid = bcrypt.compareSync(password, user.password_hash);
-    if (!isValid) {
+    // Same response for unknown email and wrong password, so accounts can't be probed
+    if (!user || !bcrypt.compareSync(password, user.password_hash)) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 

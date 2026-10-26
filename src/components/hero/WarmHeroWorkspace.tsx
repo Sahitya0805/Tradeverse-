@@ -23,7 +23,7 @@ export const WarmHeroWorkspace: React.FC = () => {
   const [queryInput, setQueryInput] = useState('');
 
   // Extract first name for a friendly greeting
-  const firstName = currentUser.name.trim().split(' ')[0] || 'Sahitya';
+  const firstName = currentUser.name.trim().split(' ')[0] || 'there';
 
   const PROMPT_CHIPS = [
     '🚗 Family SUV under $40k',
